@@ -1,1 +1,0 @@
-# assessment-collection-service

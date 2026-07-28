@@ -1,0 +1,51 @@
+<div class="container mt-4">
+  <h2>Division Management</h2>
+
+  <div class="card mb-4">
+    <div class="card-header">
+      {{ isEditing ? 'Edit Division' : 'Add New Division' }}
+    </div>
+    <div class="card-body">
+      <form (ngSubmit)="save()">
+        <div class="mb-3">
+          <label for="name" class="form-label">Division Name</label>
+          <input type="text" class="form-control" id="name"
+                 [(ngModel)]="selectedDivision.name" name="name" required>
+        </div>
+        <button type="submit" class="btn btn-primary me-2">
+          {{ isEditing ? 'Update' : 'Create' }}
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="resetForm()">
+          Cancel
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      Division List
+    </div>
+    <div class="card-body">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let division of divisions">
+            <td>{{ division.id }}</td>
+            <td>{{ division.name }}</td>
+            <td>
+              <button class="btn btn-sm btn-warning me-2" (click)="edit(division)">Edit</button>
+              <button class="btn btn-sm btn-danger" (click)="delete(division.id!)">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
