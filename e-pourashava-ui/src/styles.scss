@@ -1,4 +1,17 @@
 body {
-  font-family: 'SolaimanLipi', 'Kalpurush', Arial, sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f8f9fa;
+}
+
+.table th {
+  white-space: nowrap;
+}
+
+.btn-sm {
+  padding: 0.2rem 0.5rem;
+  font-size: 0.8rem;
+}
+
+.modal-backdrop {
+  z-index: 1040;
 }

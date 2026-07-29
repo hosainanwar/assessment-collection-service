@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { WordApiService } from '../../service/word-api.service';
-import { Word } from '../../model/dto/word.model';
+import { WordApiService } from '../../services/WordApiService';
+import { Word } from '../../models/models';
 
 @Component({
   selector: 'app-words',
@@ -14,6 +14,7 @@ import { Word } from '../../model/dto/word.model';
       <button class="btn btn-primary" (click)="openModal()">+ নতুন ওয়ার্ড</button>
     </div>
 
+    <!-- Search -->
     <div class="row mb-3">
       <div class="col-md-4">
         <input type="text" class="form-control" placeholder="সাবডোমেইন দিয়ে খুঁজুন..."
@@ -24,6 +25,7 @@ import { Word } from '../../model/dto/word.model';
       </div>
     </div>
 
+    <!-- Table -->
     <div class="table-responsive">
       <table class="table table-striped table-hover">
         <thead class="table-dark">
@@ -53,6 +55,7 @@ import { Word } from '../../model/dto/word.model';
       </table>
     </div>
 
+    <!-- Modal -->
     <div class="modal fade" [class.show]="showModal" [style.display]="showModal ? 'block' : 'none'" tabindex="-1">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -107,12 +110,16 @@ export class WordsComp implements OnInit {
   }
 
   loadAll() {
-    this.wordService.getAll().subscribe(res => this.words = res);
+    this.wordService.getAll().subscribe(res => {
+      if (res.success) this.words = res.data;
+    });
   }
 
   loadBySubdomain() {
     if (this.searchSubdomain.trim()) {
-      this.wordService.getBySubdomain(this.searchSubdomain).subscribe(res => this.words = res);
+      this.wordService.getBySubdomain(this.searchSubdomain).subscribe(res => {
+        if (res.success) this.words = res.data;
+      });
     } else {
       this.loadAll();
     }
@@ -148,10 +155,14 @@ export class WordsComp implements OnInit {
       : this.wordService.create(this.formData);
 
     obs.subscribe({
-      next: () => {
+      next: (res) => {
         this.saving = false;
-        this.closeModal();
-        this.loadAll();
+        if (res.success) {
+          this.closeModal();
+          this.loadAll();
+        } else {
+          this.errorMessage = res.message;
+        }
       },
       error: (err) => {
         this.saving = false;

@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ParaApiService } from '../../service/para-api.service';
-import { WordApiService } from '../../service/word-api.service';
-import { Para } from '../../model/dto/para.model';
-import { Word } from '../../model/dto/word.model';
+import { ParaApiService } from '../../services/ParaApiService';
+import { WordApiService } from '../../services/WordApiService';
+import { Para, Word } from '../../models/models';
 
 @Component({
   selector: 'app-paras',
@@ -16,6 +15,7 @@ import { Word } from '../../model/dto/word.model';
       <button class="btn btn-primary" (click)="openModal()">+ নতুন পাড়া</button>
     </div>
 
+    <!-- Filter -->
     <div class="row mb-3">
       <div class="col-md-4">
         <select class="form-select" [(ngModel)]="filterWordId" (change)="loadFiltered()">
@@ -31,6 +31,7 @@ import { Word } from '../../model/dto/word.model';
       </div>
     </div>
 
+    <!-- Table -->
     <div class="table-responsive">
       <table class="table table-striped table-hover">
         <thead class="table-dark">
@@ -62,6 +63,7 @@ import { Word } from '../../model/dto/word.model';
       </table>
     </div>
 
+    <!-- Modal -->
     <div class="modal fade" [class.show]="showModal" [style.display]="showModal ? 'block' : 'none'" tabindex="-1">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -129,20 +131,30 @@ export class ParasComp implements OnInit {
   }
 
   loadWords() {
-    this.wordService.getAll().subscribe(res => this.allWords = res);
+    this.wordService.getAll().subscribe(res => {
+      if (res.success) this.allWords = res.data;
+    });
   }
 
   loadAll() {
-    this.paraService.getAll().subscribe(res => this.paras = res);
+    this.paraService.getAll().subscribe(res => {
+      if (res.success) this.paras = res.data;
+    });
   }
 
   loadFiltered() {
     if (this.filterWordId && this.filterSubdomain) {
-      this.paraService.getByWordIdAndSubdomain(+this.filterWordId, this.filterSubdomain).subscribe(res => this.paras = res);
+      this.paraService.getByWordAndSubdomain(+this.filterWordId, this.filterSubdomain).subscribe(res => {
+        if (res.success) this.paras = res.data;
+      });
     } else if (this.filterWordId) {
-      this.paraService.getByWordId(+this.filterWordId).subscribe(res => this.paras = res);
+      this.paraService.getByWordId(+this.filterWordId).subscribe(res => {
+        if (res.success) this.paras = res.data;
+      });
     } else if (this.filterSubdomain) {
-      this.paraService.getBySubdomain(this.filterSubdomain).subscribe(res => this.paras = res);
+      this.paraService.getBySubdomain(this.filterSubdomain).subscribe(res => {
+        if (res.success) this.paras = res.data;
+      });
     } else {
       this.loadAll();
     }
@@ -178,10 +190,14 @@ export class ParasComp implements OnInit {
       : this.paraService.create(this.formData);
 
     obs.subscribe({
-      next: () => {
+      next: (res) => {
         this.saving = false;
-        this.closeModal();
-        this.loadAll();
+        if (res.success) {
+          this.closeModal();
+          this.loadAll();
+        } else {
+          this.errorMessage = res.message;
+        }
       },
       error: (err) => {
         this.saving = false;
