@@ -1,8 +1,16 @@
 import { Routes } from '@angular/router';
-import { DivisionComponent } from './module/division/division.component';
+import { LayoutComp } from './components/layout/LayoutComp';
+import { WordsComp } from './components/words/WordsComp';
+import { ParasComp } from './components/paras/ParasComp';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'divisions', pathMatch: 'full' },
-  { path: 'divisions', component: DivisionComponent },
-  { path: '**', redirectTo: 'divisions' }
+  {
+    path: '',
+    component: LayoutComp,
+    children: [
+      { path: '', redirectTo: 'words', pathMatch: 'full' },
+      { path: 'words', component: WordsComp },
+      { path: 'paras', component: ParasComp }
+    ]
+  }
 ];
