@@ -6,7 +6,6 @@ import { Word } from '../model/dto/word.model';
 
 @Injectable({ providedIn: 'root' })
 export class WordApiService {
-
   private baseUrl = '/words';
 
   constructor(private api: ApiService) {}
@@ -24,10 +23,7 @@ export class WordApiService {
   }
 
   search(wordName: string, subdomain: string): Observable<Word[]> {
-    let params: any = {};
-    if (wordName) params.wordName = wordName;
-    if (subdomain) params.subdomain = subdomain;
-    return this.api.get<ApiResponse<Word[]>>(`${this.baseUrl}/search`, params).pipe(map(res => res.data));
+    return this.api.get<ApiResponse<Word[]>>(`${this.baseUrl}/search`, { wordName, subdomain }).pipe(map(res => res.data));
   }
 
   create(word: Word): Observable<Word> {

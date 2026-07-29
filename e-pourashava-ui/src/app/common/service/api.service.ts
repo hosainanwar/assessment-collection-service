@@ -10,8 +10,14 @@ export class ApiService {
 
   constructor(private http: HttpClient) {}
 
-  get<T>(path: string, params: HttpParams = new HttpParams()): Observable<T> {
-    return this.http.get<T>(`${this.baseUrl}${path}`, { params });
+  get<T>(path: string, params: Record<string, any> = {}): Observable<T> {
+    let httpParams = new HttpParams();
+    Object.keys(params).forEach(key => {
+      if (params[key] !== null && params[key] !== undefined && params[key] !== '') {
+        httpParams = httpParams.set(key, params[key]);
+      }
+    });
+    return this.http.get<T>(`${this.baseUrl}${path}`, { params: httpParams });
   }
 
   post<T>(path: string, body: object = {}): Observable<T> {

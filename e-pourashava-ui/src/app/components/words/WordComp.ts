@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { WordApiService } from '../../services/WordApiService';
-import { Word } from '../../models/models';
+import { WordApiService } from '../../service/WordApiService';
+import { Word } from '../../model/dto/word.model';
 
 @Component({
   selector: 'app-words',
@@ -14,7 +14,6 @@ import { Word } from '../../models/models';
       <button class="btn btn-primary" (click)="openModal()">+ নতুন ওয়ার্ড</button>
     </div>
 
-    <!-- Search -->
     <div class="row mb-3">
       <div class="col-md-4">
         <input type="text" class="form-control" placeholder="সাবডোমেইন দিয়ে খুঁজুন..."
@@ -25,7 +24,6 @@ import { Word } from '../../models/models';
       </div>
     </div>
 
-    <!-- Table -->
     <div class="table-responsive">
       <table class="table table-striped table-hover">
         <thead class="table-dark">
@@ -55,7 +53,6 @@ import { Word } from '../../models/models';
       </table>
     </div>
 
-    <!-- Modal -->
     <div class="modal fade" [class.show]="showModal" [style.display]="showModal ? 'block' : 'none'" tabindex="-1">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -89,36 +86,33 @@ import { Word } from '../../models/models';
     </div>
     <div class="modal-backdrop fade show" *ngIf="showModal" (click)="closeModal()"></div>
   `,
-  styles: [`
-    .modal.show { z-index: 1050; }
-  `]
+  styles: [`.modal.show { z-index: 1050; }`]
 })
-export class WordsComp implements OnInit {
+export class WordComp implements OnInit {
   words: Word[] = [];
   showModal = false;
   editId: number | null = null;
   saving = false;
   errorMessage = '';
   searchSubdomain = '';
-
   formData: Word = { wordName: '', subdomain: '', createdBy: '' };
 
   constructor(private wordService: WordApiService) {}
 
-  ngOnInit() {
-    this.loadAll();
-  }
+  ngOnInit() { this.loadAll(); }
 
   loadAll() {
-    this.wordService.getAll().subscribe(res => {
-      if (res.success) this.words = res.data;
+    this.wordService.getAll().subscribe({
+      next: (data) => this.words = data,
+      error: (err) => this.errorMessage = err.error?.message || 'লোড করতে সমস্যা হয়েছে'
     });
   }
 
   loadBySubdomain() {
     if (this.searchSubdomain.trim()) {
-      this.wordService.getBySubdomain(this.searchSubdomain).subscribe(res => {
-        if (res.success) this.words = res.data;
+      this.wordService.getBySubdomain(this.searchSubdomain).subscribe({
+        next: (data) => this.words = data,
+        error: (err) => this.errorMessage = err.error?.message || 'লোড করতে সমস্যা হয়েছে'
       });
     } else {
       this.loadAll();
@@ -139,10 +133,7 @@ export class WordsComp implements OnInit {
     this.showModal = true;
   }
 
-  closeModal() {
-    this.showModal = false;
-    this.editId = null;
-  }
+  closeModal() { this.showModal = false; this.editId = null; }
 
   saveWord() {
     if (!this.formData.wordName.trim() || !this.formData.subdomain.trim()) {
@@ -153,21 +144,9 @@ export class WordsComp implements OnInit {
     const obs = this.editId
       ? this.wordService.update(this.editId, this.formData)
       : this.wordService.create(this.formData);
-
     obs.subscribe({
-      next: (res) => {
-        this.saving = false;
-        if (res.success) {
-          this.closeModal();
-          this.loadAll();
-        } else {
-          this.errorMessage = res.message;
-        }
-      },
-      error: (err) => {
-        this.saving = false;
-        this.errorMessage = err.error?.message || 'সংরক্ষণে সমস্যা হয়েছে';
-      }
+      next: () => { this.saving = false; this.closeModal(); this.loadAll(); },
+      error: (err) => { this.saving = false; this.errorMessage = err.error?.message || 'সংরক্ষণে সমস্যা হয়েছে'; }
     });
   }
 

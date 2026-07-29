@@ -1,17 +1,45 @@
+/* Global Styles */
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f8f9fa;
 }
 
+/* Table */
 .table th {
   white-space: nowrap;
 }
 
+/* Buttons */
 .btn-sm {
   padding: 0.2rem 0.5rem;
   font-size: 0.8rem;
 }
 
+/* Modal */
 .modal-backdrop {
   z-index: 1040;
+}
+
+.modal.show {
+  z-index: 1050;
+}
+
+/* Sidebar */
+.sidebar .nav-link {
+  border-radius: 6px;
+  margin-bottom: 2px;
+}
+
+.sidebar .nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar .nav-link.active {
+  background-color: rgba(255, 255, 255, 0.15);
+  font-weight: 500;
+}
+
+/* Toast overrides */
+.toast-container .ngx-toastr {
+  border-radius: 8px;
 }

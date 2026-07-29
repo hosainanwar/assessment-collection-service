@@ -2,6 +2,6 @@ export interface District {
   id?: number;
   name: string;
   enName: string;
-  divisionId?: number;
+  divisionId: number;
   divisionName?: string;
 }

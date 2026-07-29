@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ParaApiService } from '../../services/ParaApiService';
-import { WordApiService } from '../../services/WordApiService';
-import { Para, Word } from '../../models/models';
+import { ParaApiService } from '../../service/ParaApiService';
+import { WordApiService } from '../../service/WordApiService';
+import { Para } from '../../model/dto/para.model';
+import { Word } from '../../model/dto/word.model';
 
 @Component({
   selector: 'app-paras',
@@ -15,7 +16,6 @@ import { Para, Word } from '../../models/models';
       <button class="btn btn-primary" (click)="openModal()">+ নতুন পাড়া</button>
     </div>
 
-    <!-- Filter -->
     <div class="row mb-3">
       <div class="col-md-4">
         <select class="form-select" [(ngModel)]="filterWordId" (change)="loadFiltered()">
@@ -31,7 +31,6 @@ import { Para, Word } from '../../models/models';
       </div>
     </div>
 
-    <!-- Table -->
     <div class="table-responsive">
       <table class="table table-striped table-hover">
         <thead class="table-dark">
@@ -63,7 +62,6 @@ import { Para, Word } from '../../models/models';
       </table>
     </div>
 
-    <!-- Modal -->
     <div class="modal fade" [class.show]="showModal" [style.display]="showModal ? 'block' : 'none'" tabindex="-1">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -104,11 +102,9 @@ import { Para, Word } from '../../models/models';
     </div>
     <div class="modal-backdrop fade show" *ngIf="showModal" (click)="closeModal()"></div>
   `,
-  styles: [`
-    .modal.show { z-index: 1050; }
-  `]
+  styles: [`.modal.show { z-index: 1050; }`]
 })
-export class ParasComp implements OnInit {
+export class ParaComp implements OnInit {
   paras: Para[] = [];
   allWords: Word[] = [];
   showModal = false;
@@ -117,44 +113,33 @@ export class ParasComp implements OnInit {
   errorMessage = '';
   filterWordId = '';
   filterSubdomain = '';
-
   formData: Para = { pbrName: '', wordId: null as any, subdomain: 'sreepur', createdBy: '' };
 
-  constructor(
-    private paraService: ParaApiService,
-    private wordService: WordApiService
-  ) {}
+  constructor(private paraService: ParaApiService, private wordService: WordApiService) {}
 
-  ngOnInit() {
-    this.loadWords();
-    this.loadAll();
-  }
+  ngOnInit() { this.loadWords(); this.loadAll(); }
 
   loadWords() {
-    this.wordService.getAll().subscribe(res => {
-      if (res.success) this.allWords = res.data;
+    this.wordService.getAll().subscribe({
+      next: (data) => this.allWords = data,
+      error: (err) => this.errorMessage = err.error?.message || 'ওয়ার্ড লোড করতে সমস্যা হয়েছে'
     });
   }
 
   loadAll() {
-    this.paraService.getAll().subscribe(res => {
-      if (res.success) this.paras = res.data;
+    this.paraService.getAll().subscribe({
+      next: (data) => this.paras = data,
+      error: (err) => this.errorMessage = err.error?.message || 'লোড করতে সমস্যা হয়েছে'
     });
   }
 
   loadFiltered() {
     if (this.filterWordId && this.filterSubdomain) {
-      this.paraService.getByWordAndSubdomain(+this.filterWordId, this.filterSubdomain).subscribe(res => {
-        if (res.success) this.paras = res.data;
-      });
+      this.paraService.getByWordIdAndSubdomain(+this.filterWordId, this.filterSubdomain).subscribe({ next: (data) => this.paras = data, error: (err) => this.errorMessage = err.error?.message || 'লোড করতে সমস্যা হয়েছে' });
     } else if (this.filterWordId) {
-      this.paraService.getByWordId(+this.filterWordId).subscribe(res => {
-        if (res.success) this.paras = res.data;
-      });
+      this.paraService.getByWordId(+this.filterWordId).subscribe({ next: (data) => this.paras = data, error: (err) => this.errorMessage = err.error?.message || 'লোড করতে সমস্যা হয়েছে' });
     } else if (this.filterSubdomain) {
-      this.paraService.getBySubdomain(this.filterSubdomain).subscribe(res => {
-        if (res.success) this.paras = res.data;
-      });
+      this.paraService.getBySubdomain(this.filterSubdomain).subscribe({ next: (data) => this.paras = data, error: (err) => this.errorMessage = err.error?.message || 'লোড করতে সমস্যা হয়েছে' });
     } else {
       this.loadAll();
     }
@@ -167,17 +152,8 @@ export class ParasComp implements OnInit {
     this.showModal = true;
   }
 
-  editModal(para: Para) {
-    this.editId = para.id!;
-    this.formData = { ...para };
-    this.errorMessage = '';
-    this.showModal = true;
-  }
-
-  closeModal() {
-    this.showModal = false;
-    this.editId = null;
-  }
+  editModal(para: Para) { this.editId = para.id!; this.formData = { ...para }; this.errorMessage = ''; this.showModal = true; }
+  closeModal() { this.showModal = false; this.editId = null; }
 
   savePara() {
     if (!this.formData.pbrName.trim() || !this.formData.wordId || !this.formData.subdomain.trim()) {
@@ -185,32 +161,15 @@ export class ParasComp implements OnInit {
       return;
     }
     this.saving = true;
-    const obs = this.editId
-      ? this.paraService.update(this.editId, this.formData)
-      : this.paraService.create(this.formData);
-
+    const obs = this.editId ? this.paraService.update(this.editId, this.formData) : this.paraService.create(this.formData);
     obs.subscribe({
-      next: (res) => {
-        this.saving = false;
-        if (res.success) {
-          this.closeModal();
-          this.loadAll();
-        } else {
-          this.errorMessage = res.message;
-        }
-      },
-      error: (err) => {
-        this.saving = false;
-        this.errorMessage = err.error?.message || 'সংরক্ষণে সমস্যা হয়েছে';
-      }
+      next: () => { this.saving = false; this.closeModal(); this.loadAll(); },
+      error: (err) => { this.saving = false; this.errorMessage = err.error?.message || 'সংরক্ষণে সমস্যা হয়েছে'; }
     });
   }
 
   deletePara(id: number) {
     if (!confirm('আপনি কি এই পাড়া মুছে ফেলতে চান?')) return;
-    this.paraService.delete(id).subscribe({
-      next: () => this.loadAll(),
-      error: (err) => alert(err.error?.message || 'মুছে ফেলায় সমস্যা')
-    });
+    this.paraService.delete(id).subscribe({ next: () => this.loadAll(), error: (err) => alert(err.error?.message || 'মুছে ফেলায় সমস্যা') });
   }
 }

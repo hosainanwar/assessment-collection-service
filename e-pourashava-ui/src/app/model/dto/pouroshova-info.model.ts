@@ -11,8 +11,9 @@ export interface PouroshovaInfo {
   taxCollectorType?: string;
   taxCollectorSign?: string;
   subdomain: string;
-  mayorLabelType: string;
-  mayorLabelTypeCollection: string;
+  createdBy?: string;
+  mayorLabelType?: string;
+  mayorLabelTypeCollection?: string;
   logo?: string;
   mobile?: string;
   nirdharonMobile?: string;

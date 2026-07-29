@@ -3,10 +3,11 @@ export interface Pourashava {
   bnName: string;
   enName: string;
   subdomain: string;
-  features?: string;
-  divisionId?: number;
+  divisionId: number;
   divisionName?: string;
-  districtId?: number;
+  districtId: number;
   districtName?: string;
+  features?: string;
   ipAddress?: string;
+  createdBy?: number;
 }

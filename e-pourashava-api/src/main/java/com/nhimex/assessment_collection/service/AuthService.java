@@ -43,4 +43,26 @@ public class AuthService {
                 .role(user.getRole())
                 .build();
     }
+
+    public LoginResponseDto refresh(String refreshToken) {
+        if (!tokenProvider.validateToken(refreshToken)) {
+            throw new IllegalArgumentException("Invalid or expired refresh token");
+        }
+
+        String username = tokenProvider.getUsernameFromToken(refreshToken);
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        String newAccessToken = tokenProvider.generateToken(username);
+        String newRefreshToken = tokenProvider.generateRefreshToken(username);
+
+        return LoginResponseDto.builder()
+                .accessToken(newAccessToken)
+                .refreshToken(newRefreshToken)
+                .tokenType("Bearer")
+                .expiresIn(86400000L)
+                .username(user.getUsername())
+                .role(user.getRole())
+                .build();
+    }
 }

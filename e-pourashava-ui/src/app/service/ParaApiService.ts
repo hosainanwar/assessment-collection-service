@@ -6,7 +6,6 @@ import { Para } from '../model/dto/para.model';
 
 @Injectable({ providedIn: 'root' })
 export class ParaApiService {
-
   private baseUrl = '/paras';
 
   constructor(private api: ApiService) {}

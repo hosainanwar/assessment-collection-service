@@ -50,10 +50,15 @@ spring:
       time-to-live: 600000
       cache-null-values: false
 
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    default-property-inclusion: non_null
+
 jwt:
-  secret: ${JWT_SECRET:e-pourashava-secret-key-must-be-at-least-256-bits-long-for-hs256}
-  expiration: 86400000
-  refresh-expiration: 604800000
+  secret: ${JWT_SECRET:eW91ci1zZWNyZXQta2V5LW11c3QtYmUtbG9uZy1lbm91Z2gtZm9yLWhzMjU2}
+  expiration: ${JWT_EXPIRATION:86400000}
+  refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000}
   header: Authorization
   prefix: "Bearer "
 
@@ -74,7 +79,10 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics
+        include: health,info,metrics,prometheus
   endpoint:
     health:
       show-details: always
+  metrics:
+    tags:
+      application: assessment-collection

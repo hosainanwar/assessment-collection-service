@@ -62,6 +62,7 @@ public class User extends Auditable {
     @Builder.Default
     private Boolean status = true;
 
-    @Transient
-    private String role;
+    @Column(name = "role")
+    @Builder.Default
+    private String role = "USER";
 }
