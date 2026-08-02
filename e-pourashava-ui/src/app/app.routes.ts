@@ -1,13 +1,23 @@
 import { Routes } from '@angular/router';
 import { LayoutComp } from './components/layout/LayoutComp';
 import { LoginComp } from './components/login/LoginComp';
-import { WordComp } from './components/words/WordComp';
-import { ParaComp } from './components/paras/ParaComp';
-import { DivisionComp } from './components/division/DivisionComp';
-import { DistrictComp } from './components/district/DistrictComp';
-import { PourashavaComp } from './components/pourashava/PourashavaComp';
+
+import { DivisionListComponent } from './components/division/DivisionListComp';
+import { DivisionFormComponent } from './components/division/DivisionFormComp';
+
+import { DistrictListComponent } from './components/district/DistrictListComp';
+import { DistrictFormComponent } from './components/district/DistrictFormComp';
+
+import { PourashavaListComponent } from './components/pourashava/PourashavaListComp';
+import { PourashavaFormComponent } from './components/pourashava/PourashavaFormComp';
+
 import { PouroshovaInfoComp } from './components/pouroshova-info/PouroshovaInfoComp';
-import { authGuard } from './common/guard/auth.guard';
+
+import { WordListComponent } from './components/words/WordListComp';
+import { WordFormComponent } from './components/words/WordFormComp';
+
+import { ParaListComponent } from './components/paras/ParaListComp';
+import { ParaFormComponent } from './components/paras/ParaFormComp';
 
 export const routes: Routes = [
   {
@@ -17,15 +27,36 @@ export const routes: Routes = [
   {
     path: '',
     component: LayoutComp,
-    canActivate: [authGuard],
     children: [
       { path: '', redirectTo: 'divisions', pathMatch: 'full' },
-      { path: 'divisions', component: DivisionComp },
-      { path: 'districts', component: DistrictComp },
-      { path: 'pourashavas', component: PourashavaComp },
+      
+      // Division routes
+      { path: 'divisions', component: DivisionListComponent },
+      { path: 'divisions/create', component: DivisionFormComponent },
+      { path: 'divisions/edit/:id', component: DivisionFormComponent },
+      
+      // District routes
+      { path: 'districts', component: DistrictListComponent },
+      { path: 'districts/create', component: DistrictFormComponent },
+      { path: 'districts/edit/:id', component: DistrictFormComponent },
+      
+      // Pourashava routes
+      { path: 'pourashavas', component: PourashavaListComponent },
+      { path: 'pourashavas/create', component: PourashavaFormComponent },
+      { path: 'pourashavas/edit/:id', component: PourashavaFormComponent },
+      
+      // PouroshovaInfo routes (keeping modal-based for now)
       { path: 'pouroshova-infos', component: PouroshovaInfoComp },
-      { path: 'words', component: WordComp },
-      { path: 'paras', component: ParaComp }
+      
+      // Word routes
+      { path: 'words', component: WordListComponent },
+      { path: 'words/create', component: WordFormComponent },
+      { path: 'words/edit/:id', component: WordFormComponent },
+      
+      // Para routes
+      { path: 'paras', component: ParaListComponent },
+      { path: 'paras/create', component: ParaFormComponent },
+      { path: 'paras/edit/:id', component: ParaFormComponent }
     ]
   },
   { path: '**', redirectTo: '' }
