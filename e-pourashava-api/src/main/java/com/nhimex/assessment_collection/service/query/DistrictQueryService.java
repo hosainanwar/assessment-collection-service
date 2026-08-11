@@ -44,4 +44,8 @@ public class DistrictQueryService {
         }
         return districtRepository.findAll(spec, pageable);
     }
+
+    public boolean existsByNameAndDivisionId(String name, Long divisionId) {
+        return districtRepository.existsByNameAndDivisionId(name, divisionId);
+    }
 }

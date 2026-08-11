@@ -2,6 +2,7 @@ package com.nhimex.assessment_collection.service.mapper;
 
 import com.nhimex.assessment_collection.dto.response_dto.ParaResponseDto;
 import com.nhimex.assessment_collection.entity.Para;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -11,13 +12,12 @@ public class ParaMapper {
         if (para == null) {
             return null;
         }
-        return ParaResponseDto.builder()
-                .id(para.getId())
-                .pbrName(para.getPbrName())
-                .wordId(para.getWord() != null ? para.getWord().getId() : null)
-                .wordName(para.getWord() != null ? para.getWord().getWordName() : null)
-                .subdomain(para.getSubdomain())
-                .createdBy(para.getCreatedBy())
-                .build();
+        ParaResponseDto response = new ParaResponseDto();
+        BeanUtils.copyProperties(para, response);
+        if (para.getWord() != null) {
+            response.setWordId(para.getWord().getId());
+            response.setWordName(para.getWord().getWordName());
+        }
+        return response;
     }
 }

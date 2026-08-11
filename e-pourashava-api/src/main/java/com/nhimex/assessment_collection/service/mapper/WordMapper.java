@@ -2,6 +2,7 @@ package com.nhimex.assessment_collection.service.mapper;
 
 import com.nhimex.assessment_collection.dto.response_dto.WordResponseDto;
 import com.nhimex.assessment_collection.entity.Word;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -11,11 +12,8 @@ public class WordMapper {
         if (word == null) {
             return null;
         }
-        return WordResponseDto.builder()
-                .id(word.getId())
-                .wordName(word.getWordName())
-                .subdomain(word.getSubdomain())
-                .createdBy(word.getCreatedBy())
-                .build();
+        WordResponseDto response = new WordResponseDto();
+        BeanUtils.copyProperties(word, response);
+        return response;
     }
 }

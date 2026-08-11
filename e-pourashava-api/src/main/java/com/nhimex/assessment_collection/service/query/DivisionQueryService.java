@@ -42,4 +42,8 @@ public class DivisionQueryService {
         };
         return divisionRepository.findAll(spec, pageable);
     }
+
+    public boolean existsByName(String name) {
+        return divisionRepository.existsByName(name);
+    }
 }

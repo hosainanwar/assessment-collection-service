@@ -2,6 +2,7 @@ package com.nhimex.assessment_collection.service.mapper;
 
 import com.nhimex.assessment_collection.dto.response_dto.PourashavaResponseDto;
 import com.nhimex.assessment_collection.entity.Pourashava;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -11,17 +12,16 @@ public class PourashavaMapper {
         if (pourashava == null) {
             return null;
         }
-        return PourashavaResponseDto.builder()
-                .id(pourashava.getId())
-                .bnName(pourashava.getBnName())
-                .enName(pourashava.getEnName())
-                .subdomain(pourashava.getSubdomain())
-                .features(pourashava.getFeatures())
-                .divisionId(pourashava.getDivision() != null ? pourashava.getDivision().getId() : null)
-                .divisionName(pourashava.getDivision() != null ? pourashava.getDivision().getName() : null)
-                .districtId(pourashava.getDistrict() != null ? pourashava.getDistrict().getId() : null)
-                .districtName(pourashava.getDistrict() != null ? pourashava.getDistrict().getName() : null)
-                .ipAddress(pourashava.getIpAddress())
-                .build();
+        PourashavaResponseDto response = new PourashavaResponseDto();
+        BeanUtils.copyProperties(pourashava, response);
+        if (pourashava.getDivision() != null) {
+            response.setDivisionId(pourashava.getDivision().getId());
+            response.setDivisionName(pourashava.getDivision().getName());
+        }
+        if (pourashava.getDistrict() != null) {
+            response.setDistrictId(pourashava.getDistrict().getId());
+            response.setDistrictName(pourashava.getDistrict().getName());
+        }
+        return response;
     }
 }

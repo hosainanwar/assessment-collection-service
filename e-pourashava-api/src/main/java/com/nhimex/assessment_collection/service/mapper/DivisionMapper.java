@@ -2,6 +2,7 @@ package com.nhimex.assessment_collection.service.mapper;
 
 import com.nhimex.assessment_collection.dto.response_dto.DivisionResponseDto;
 import com.nhimex.assessment_collection.entity.Division;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -11,9 +12,8 @@ public class DivisionMapper {
         if (division == null) {
             return null;
         }
-        return DivisionResponseDto.builder()
-                .id(division.getId())
-                .name(division.getName())
-                .build();
+        DivisionResponseDto response = new DivisionResponseDto();
+        BeanUtils.copyProperties(division, response);
+        return response;
     }
 }

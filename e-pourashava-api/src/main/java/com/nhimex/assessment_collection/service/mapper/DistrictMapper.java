@@ -2,6 +2,7 @@ package com.nhimex.assessment_collection.service.mapper;
 
 import com.nhimex.assessment_collection.dto.response_dto.DistrictResponseDto;
 import com.nhimex.assessment_collection.entity.District;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -11,12 +12,12 @@ public class DistrictMapper {
         if (district == null) {
             return null;
         }
-        return DistrictResponseDto.builder()
-                .id(district.getId())
-                .name(district.getName())
-                .enName(district.getEnName())
-                .divisionId(district.getDivision() != null ? district.getDivision().getId() : null)
-                .divisionName(district.getDivision() != null ? district.getDivision().getName() : null)
-                .build();
+        DistrictResponseDto response = new DistrictResponseDto();
+        BeanUtils.copyProperties(district, response);
+        if (district.getDivision() != null) {
+            response.setDivisionId(district.getDivision().getId());
+            response.setDivisionName(district.getDivision().getName());
+        }
+        return response;
     }
 }

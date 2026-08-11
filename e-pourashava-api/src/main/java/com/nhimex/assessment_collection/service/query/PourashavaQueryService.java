@@ -35,4 +35,8 @@ public class PourashavaQueryService {
     public List<Pourashava> findByDivisionId(Long divisionId) {
         return pourashavaRepository.findByDivisionId(divisionId);
     }
+
+    public boolean existsBySubdomain(String subdomain) {
+        return pourashavaRepository.existsBySubdomain(subdomain);
+    }
 }

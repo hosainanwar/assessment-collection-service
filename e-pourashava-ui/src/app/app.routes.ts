@@ -19,6 +19,9 @@ import { WordFormComponent } from './components/words/WordFormComp';
 import { ParaListComponent } from './components/paras/ParaListComp';
 import { ParaFormComponent } from './components/paras/ParaFormComp';
 
+import { UserListComponent } from './components/user/UserListComp';
+import { UserFormComponent } from './components/user/UserFormComp';
+
 export const routes: Routes = [
   {
     path: 'login',
@@ -45,7 +48,7 @@ export const routes: Routes = [
       { path: 'pourashavas/create', component: PourashavaFormComponent },
       { path: 'pourashavas/edit/:id', component: PourashavaFormComponent },
       
-      // PouroshovaInfo routes (keeping modal-based for now)
+      // PouroshovaInfo routes
       { path: 'pouroshova-infos', component: PouroshovaInfoComp },
       
       // Word routes
@@ -56,7 +59,12 @@ export const routes: Routes = [
       // Para routes
       { path: 'paras', component: ParaListComponent },
       { path: 'paras/create', component: ParaFormComponent },
-      { path: 'paras/edit/:id', component: ParaFormComponent }
+      { path: 'paras/edit/:id', component: ParaFormComponent },
+      
+      // User routes
+      { path: 'users', component: UserListComponent },
+      { path: 'users/create', component: UserFormComponent },
+      { path: 'users/edit/:id', component: UserFormComponent }
     ]
   },
   { path: '**', redirectTo: '' }

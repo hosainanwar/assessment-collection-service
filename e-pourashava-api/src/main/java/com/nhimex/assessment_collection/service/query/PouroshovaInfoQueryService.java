@@ -6,11 +6,17 @@ import com.nhimex.assessment_collection.repository.PouroshovaInfoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class PouroshovaInfoQueryService {
 
     private final PouroshovaInfoRepository pouroshovaInfoRepository;
+
+    public List<PouroshovaInfo> findAll() {
+        return pouroshovaInfoRepository.findAll();
+    }
 
     public PouroshovaInfo findById(Long id) {
         return pouroshovaInfoRepository.findById(id)
@@ -20,5 +26,9 @@ public class PouroshovaInfoQueryService {
     public PouroshovaInfo findBySubdomain(String subdomain) {
         return pouroshovaInfoRepository.findBySubdomain(subdomain)
                 .orElseThrow(() -> new ResourceNotFoundException("PouroshovaInfo", "subdomain", subdomain));
+    }
+
+    public boolean existsBySubdomain(String subdomain) {
+        return pouroshovaInfoRepository.existsBySubdomain(subdomain);
     }
 }

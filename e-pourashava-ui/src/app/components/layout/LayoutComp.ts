@@ -44,6 +44,11 @@ import { AuthService } from '../../service/auth.service';
               <i class="bi bi-pin-map me-2"></i>পাড়া
             </a>
           </li>
+          <li class="nav-item border-top border-secondary mt-2 pt-2">
+            <a class="nav-link text-white" routerLink="/users" routerLinkActive="active">
+              <i class="bi bi-people me-2"></i>ব্যবহারকারী
+            </a>
+          </li>
         </ul>
       </nav>
 
