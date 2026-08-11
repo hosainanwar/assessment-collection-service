@@ -58,6 +58,9 @@ public class User extends Auditable {
     @Column(name = "password", nullable = false)
     private String password;
 
+    @Column(name = "subdomain")
+    private String subdomain;
+
     @Column(name = "status")
     @Builder.Default
     private Boolean status = true;

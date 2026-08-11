@@ -3,15 +3,17 @@ import { Observable, map } from 'rxjs';
 import { ApiService } from '../common/service/api.service';
 import { ApiResponse } from '../common/model/api-response.model';
 import { Pourashava } from '../model/dto/pourashava.model';
+import { AuthService } from './auth.service';
 
 @Injectable({ providedIn: 'root' })
 export class PourashavaApiService {
   private baseUrl = '/pourashavas';
 
-  constructor(private api: ApiService) {}
+  constructor(private api: ApiService, private authService: AuthService) {}
 
   getAll(): Observable<Pourashava[]> {
-    return this.api.get<ApiResponse<Pourashava[]>>(this.baseUrl).pipe(map(res => res.data));
+    const subdomain = this.authService.getSubdomain();
+    return this.api.get<ApiResponse<Pourashava[]>>(this.baseUrl, { subdomain }).pipe(map(res => res.data));
   }
 
   getById(id: number): Observable<Pourashava> {

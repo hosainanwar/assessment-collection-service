@@ -41,6 +41,7 @@ public class AuthService {
                 .username(user.getUsername())
                 .tenantId(request.getTenantId())
                 .role(user.getRole())
+                .subdomain(user.getSubdomain())
                 .build();
     }
 
@@ -63,6 +64,7 @@ public class AuthService {
                 .expiresIn(86400000L)
                 .username(user.getUsername())
                 .role(user.getRole())
+                .subdomain(user.getSubdomain())
                 .build();
     }
 }

@@ -41,8 +41,8 @@ INSERT INTO pouroshova_infos (id, pouroshova_name, meyor_name, ps_name, ds_name,
 VALUES (2, 'গাজীপুর পৌরসভা', 'মোঃ রফিকুল ইসলাম', 'গাজীপুর', 'গাজীপুর', 'গাজীপুর পৌরসভা', 'gazipur', 'admin', 'mayor', 'mayor', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Test User (password: admin123)
-INSERT INTO users (id, name, username, email, password, status, created_at, updated_at)
-VALUES (1, 'Admin User', 'admin', 'admin@e-pourashava.com', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EH', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO users (id, name, username, email, password, status, subdomain, created_at, updated_at)
+VALUES (1, 'Admin User', 'admin', 'admin@e-pourashava.com', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EH', true, 'sreepur', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Sequence reset for H2
 ALTER TABLE divisions ALTER COLUMN id RESTART WITH 9;

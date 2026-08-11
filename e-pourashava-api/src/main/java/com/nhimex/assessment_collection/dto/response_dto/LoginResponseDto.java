@@ -14,4 +14,5 @@ public class LoginResponseDto {
     private String username;
     private String tenantId;
     private String role;
+    private String subdomain;
 }

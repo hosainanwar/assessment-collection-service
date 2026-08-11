@@ -17,6 +17,7 @@ export interface LoginResponse {
   username: string;
   tenantId?: string;
   role?: string;
+  subdomain?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -36,7 +37,8 @@ export class AuthService {
         localStorage.setItem(this.USER_KEY, JSON.stringify({
           username: response.username,
           role: response.role,
-          tenantId: response.tenantId
+          tenantId: response.tenantId,
+          subdomain: response.subdomain
         }));
       })
     );
@@ -66,8 +68,13 @@ export class AuthService {
     return !!this.getToken();
   }
 
-  getCurrentUser(): { username: string; role?: string; tenantId?: string } | null {
+  getCurrentUser(): { username: string; role?: string; tenantId?: string; subdomain?: string } | null {
     const user = localStorage.getItem(this.USER_KEY);
     return user ? JSON.parse(user) : null;
+  }
+
+  getSubdomain(): string | null {
+    const user = this.getCurrentUser();
+    return user?.subdomain || null;
   }
 }

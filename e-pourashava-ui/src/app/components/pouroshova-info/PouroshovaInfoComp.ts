@@ -90,11 +90,20 @@ export class PouroshovaInfoComp implements OnInit {
   formData: PouroshovaInfo = { pouroshovaName: '', meyorName: '', psName: '', dsName: '', signatureName: '', subdomain: '' };
 
   constructor(private service: PouroshovaInfoApiService) {}
-  ngOnInit() {}
+  ngOnInit() { this.loadAll(); }
+
+  loadAll() {
+    this.service.getAll().subscribe({
+      next: (data) => this.infos = data,
+      error: (err) => this.errorMessage = err.error?.message
+    });
+  }
 
   loadBySubdomain() {
     if (this.searchSubdomain.trim()) {
       this.service.getBySubdomain(this.searchSubdomain).subscribe({ next: (data) => this.infos = data ? [data] : [], error: (err) => this.errorMessage = err.error?.message });
+    } else {
+      this.loadAll();
     }
   }
 

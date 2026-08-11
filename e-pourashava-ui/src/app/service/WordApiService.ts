@@ -3,15 +3,17 @@ import { Observable, map } from 'rxjs';
 import { ApiService } from '../common/service/api.service';
 import { ApiResponse } from '../common/model/api-response.model';
 import { Word } from '../model/dto/word.model';
+import { AuthService } from './auth.service';
 
 @Injectable({ providedIn: 'root' })
 export class WordApiService {
   private baseUrl = '/words';
 
-  constructor(private api: ApiService) {}
+  constructor(private api: ApiService, private authService: AuthService) {}
 
   getAll(): Observable<Word[]> {
-    return this.api.get<ApiResponse<Word[]>>(this.baseUrl).pipe(map(res => res.data));
+    const subdomain = this.authService.getSubdomain();
+    return this.api.get<ApiResponse<Word[]>>(this.baseUrl, { subdomain }).pipe(map(res => res.data));
   }
 
   getById(id: number): Observable<Word> {
