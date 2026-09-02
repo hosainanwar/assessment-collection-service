@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class DivisionController {
     private final DivisionService divisionService;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('DIVISION:READ')")
     @Operation(summary = "Get all divisions")
     public ResponseEntity<ApiResponse<List<DivisionResponseDto>>> getAll() {
         List<DivisionResponseDto> divisions = divisionService.findAll();
@@ -29,6 +31,7 @@ public class DivisionController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('DIVISION:READ')")
     @Operation(summary = "Get division by ID")
     public ResponseEntity<ApiResponse<DivisionResponseDto>> getById(@PathVariable Long id) {
         DivisionResponseDto division = divisionService.findById(id);
@@ -36,6 +39,7 @@ public class DivisionController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('DIVISION:CREATE')")
     @Operation(summary = "Create division")
     public ResponseEntity<ApiResponse<DivisionResponseDto>> create(@RequestBody Division division) {
         DivisionResponseDto created = divisionService.create(division);
@@ -43,6 +47,7 @@ public class DivisionController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('DIVISION:UPDATE')")
     @Operation(summary = "Update division")
     public ResponseEntity<ApiResponse<DivisionResponseDto>> update(@PathVariable Long id, @RequestBody Division division) {
         DivisionResponseDto updated = divisionService.update(id, division);
@@ -50,6 +55,7 @@ public class DivisionController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('DIVISION:DELETE')")
     @Operation(summary = "Delete division")
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
         divisionService.delete(id);

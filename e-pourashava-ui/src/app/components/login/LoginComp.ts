@@ -51,6 +51,20 @@ import { AuthService } from '../../service/auth.service';
             </div>
           </div>
 
+          <div class="mb-3">
+            <label class="form-label">পৌরসভা (সাবডোমেইন)</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-building"></i></span>
+              <input type="text"
+                     class="form-control"
+                     [(ngModel)]="tenantId"
+                     name="tenantId"
+                     placeholder="যেমন: sreepur"
+                     required
+                     autocomplete="off">
+            </div>
+          </div>
+
           <div class="mb-3 form-check">
             <input type="checkbox" class="form-check-input" id="rememberMe" [(ngModel)]="rememberMe" name="rememberMe">
             <label class="form-check-label" for="rememberMe">মনে রাখুন</label>
@@ -68,7 +82,8 @@ import { AuthService } from '../../service/auth.service';
 
         <div class="login-footer">
           <p class="text-muted small">
-            ডেমো: <code>admin</code> / <code>admin123</code>
+            অ্যাডমিন: <code>admin</code> / <code>admin123</code> / <code>sreepur</code><br>
+            সুপার অ্যাডমিন: <code>superadmin</code> / <code>admin123</code> / <code>demo</code>
           </p>
         </div>
       </div>
@@ -159,6 +174,7 @@ import { AuthService } from '../../service/auth.service';
 export class LoginComp {
   username = '';
   password = '';
+  tenantId = this.inferTenant();
   showPassword = false;
   rememberMe = false;
   loading = false;
@@ -176,8 +192,8 @@ export class LoginComp {
   onLogin() {
     this.errorMessage = '';
     
-    if (!this.username.trim() || !this.password.trim()) {
-      this.errorMessage = 'ইউজারনাম এবং পাসওয়ার্ড আবশ্যক';
+    if (!this.username.trim() || !this.password.trim() || !this.tenantId.trim()) {
+      this.errorMessage = 'ইউজারনাম, পাসওয়ার্ড এবং পৌরসভা আবশ্যক';
       return;
     }
 
@@ -185,16 +201,25 @@ export class LoginComp {
 
     this.authService.login({
       username: this.username.trim(),
-      password: this.password.trim()
+      password: this.password.trim(),
+      tenantId: this.tenantId.trim()
     }).subscribe({
-      next: (response) => {
+      next: () => {
         this.loading = false;
         this.router.navigate(['/divisions']);
       },
       error: (err) => {
         this.loading = false;
-        this.errorMessage = err.error?.message || 'ইউজারনাম বা পাসওয়ার্ড ভুল';
+        this.errorMessage = err.error?.message || 'ইউজারনাম, পাসওয়ার্ড বা পৌরসভা ভুল';
       }
     });
+  }
+
+  private inferTenant(): string {
+    const host = window.location.hostname;
+    if (host && host !== 'localhost' && host !== '127.0.0.1' && host.includes('.')) {
+      return host.split('.')[0];
+    }
+    return 'sreepur';
   }
 }

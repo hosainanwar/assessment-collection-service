@@ -15,11 +15,11 @@ public class UserQueryService {
     private final UserRepository userRepository;
 
     public List<User> findAll() {
-        return userRepository.findAll();
+        return userRepository.findAllWithRoles();
     }
 
     public User findById(Long id) {
-        return userRepository.findById(id)
+        return userRepository.findWithRolesById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
     }
 

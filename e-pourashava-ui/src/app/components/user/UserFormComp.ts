@@ -3,7 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UserApiService } from '../../service/UserApiService';
+import { RoleApiService } from '../../service/RoleApiService';
 import { User } from '../../model/dto/user.model';
+import { Role } from '../../model/dto/role.model';
 
 @Component({
   selector: 'app-user-form',
@@ -54,9 +56,9 @@ import { User } from '../../model/dto/user.model';
             <div class="col-md-6 mb-3">
               <label class="form-label">রোল</label>
               <select class="form-select" [(ngModel)]="formData.role" name="role">
-                <option value="USER">USER</option>
-                <option value="ADMIN">ADMIN</option>
-                <option value="SUPER_ADMIN">SUPER_ADMIN</option>
+                <option *ngFor="let role of assignableRoles" [value]="role.code">
+                  {{ role.nameBn }} ({{ role.code }})
+                </option>
               </select>
             </div>
           </div>
@@ -120,17 +122,23 @@ export class UserFormComponent implements OnInit {
     email: '', 
     password: '',
     subdomain: '',
-    role: 'USER',
+    role: 'VIEWER',
     status: true
   };
+  assignableRoles: Role[] = [];
 
   constructor(
     private service: UserApiService,
+    private roleService: RoleApiService,
     private router: Router,
     private route: ActivatedRoute
   ) {}
 
   ngOnInit() {
+    this.roleService.getAssignable().subscribe({
+      next: (roles) => this.assignableRoles = roles,
+      error: () => this.assignableRoles = []
+    });
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.isEdit = true;
@@ -142,7 +150,11 @@ export class UserFormComponent implements OnInit {
   loadUser() {
     this.service.getById(this.editId!).subscribe({
       next: (data) => {
-        this.formData = { ...data, password: '' };
+        this.formData = {
+          ...data,
+          password: '',
+          role: data.roles?.[0] || data.role || 'VIEWER'
+        };
       },
       error: (err) => this.errorMessage = err.error?.message || 'লোড করতে সমস্যা হয়েছে'
     });
@@ -161,9 +173,14 @@ export class UserFormComponent implements OnInit {
     }
 
     this.saving = true;
-    const obs = this.editId 
-      ? this.service.update(this.editId, this.formData)
-      : this.service.create(this.formData);
+    const payload: User = {
+      ...this.formData,
+      role: this.formData.role,
+      roleCodes: this.formData.role ? [this.formData.role] : ['VIEWER']
+    };
+    const obs = this.editId
+      ? this.service.update(this.editId, payload)
+      : this.service.create(payload);
 
     obs.subscribe({
       next: () => {

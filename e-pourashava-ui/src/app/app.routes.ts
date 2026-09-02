@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { LayoutComp } from './components/layout/LayoutComp';
 import { LoginComp } from './components/login/LoginComp';
+import { authGuard } from './common/guard/auth.guard';
 
 import { DivisionListComponent } from './components/division/DivisionListComp';
 import { DivisionFormComponent } from './components/division/DivisionFormComp';
@@ -21,6 +22,8 @@ import { ParaFormComponent } from './components/paras/ParaFormComp';
 
 import { UserListComponent } from './components/user/UserListComp';
 import { UserFormComponent } from './components/user/UserFormComp';
+import { RoleListComponent } from './components/role/RoleListComp';
+import { RoleFormComponent } from './components/role/RoleFormComp';
 
 export const routes: Routes = [
   {
@@ -30,6 +33,7 @@ export const routes: Routes = [
   {
     path: '',
     component: LayoutComp,
+    canActivate: [authGuard],
     children: [
       { path: '', redirectTo: 'divisions', pathMatch: 'full' },
       
@@ -64,7 +68,11 @@ export const routes: Routes = [
       // User routes
       { path: 'users', component: UserListComponent },
       { path: 'users/create', component: UserFormComponent },
-      { path: 'users/edit/:id', component: UserFormComponent }
+      { path: 'users/edit/:id', component: UserFormComponent },
+
+      { path: 'roles', component: RoleListComponent },
+      { path: 'roles/create', component: RoleFormComponent },
+      { path: 'roles/edit/:id', component: RoleFormComponent }
     ]
   },
   { path: '**', redirectTo: '' }

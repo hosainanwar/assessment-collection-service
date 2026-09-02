@@ -1,16 +1,17 @@
 package com.nhimex.assessment_collection.security;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.List;
 
 @Slf4j
 @Component
@@ -30,18 +31,20 @@ public class JwtTokenProvider {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateToken(Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        return generateToken(userDetails.getUsername());
+    public long getJwtExpiration() {
+        return jwtExpiration;
     }
 
-    public String generateToken(String username) {
+    public String generateToken(UserPrincipal principal) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpiration);
 
         return Jwts.builder()
-                .subject(username)
-                .claim("tenant_id", TenantContext.getCurrentTenant())
+                .subject(principal.getUsername())
+                .claim("userId", principal.getUserId())
+                .claim("pourashavaId", principal.getPourashavaId())
+                .claim("subdomain", principal.getSubdomain())
+                .claim("roles", principal.getRoleCodes())
                 .issuedAt(now)
                 .expiration(expiryDate)
                 .signWith(getSigningKey())
@@ -61,13 +64,24 @@ public class JwtTokenProvider {
     }
 
     public String getUsernameFromToken(String token) {
-        Claims claims = getClaims(token);
-        return claims.getSubject();
+        return getClaims(token).getSubject();
     }
 
-    public String getTenantFromToken(String token) {
-        Claims claims = getClaims(token);
-        return claims.get("tenant_id", String.class);
+    public Long getPourashavaIdFromToken(String token) {
+        Object value = getClaims(token).get("pourashavaId");
+        if (value instanceof Number number) {
+            return number.longValue();
+        }
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<String> getRolesFromToken(String token) {
+        Object value = getClaims(token).get("roles");
+        if (value instanceof List<?> list) {
+            return (List<String>) list;
+        }
+        return List.of();
     }
 
     private Claims getClaims(String token) {

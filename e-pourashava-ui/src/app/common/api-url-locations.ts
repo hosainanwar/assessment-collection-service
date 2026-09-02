@@ -29,5 +29,11 @@ export const API_URL = {
     base: '/pourashavas',
     byId: (id: number) => `/pourashavas/${id}`,
     bySubdomain: (subdomain: string) => `/pourashavas/by-subdomain/${subdomain}`
+  },
+  roles: {
+    base: '/roles',
+    byId: (id: number) => `/roles/${id}`,
+    assignable: '/roles/assignable',
+    permissions: '/roles/permissions'
   }
 };

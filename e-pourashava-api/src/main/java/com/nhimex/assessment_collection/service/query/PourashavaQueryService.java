@@ -3,6 +3,9 @@ package com.nhimex.assessment_collection.service.query;
 import com.nhimex.assessment_collection.entity.Pourashava;
 import com.nhimex.assessment_collection.exception.ResourceNotFoundException;
 import com.nhimex.assessment_collection.repository.PourashavaRepository;
+import com.nhimex.assessment_collection.security.CurrentUserProvider;
+import com.nhimex.assessment_collection.security.RoleCodes;
+import com.nhimex.assessment_collection.security.UserPrincipal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +18,11 @@ public class PourashavaQueryService {
     private final PourashavaRepository pourashavaRepository;
 
     public List<Pourashava> findAll() {
-        return pourashavaRepository.findAll();
+        UserPrincipal principal = CurrentUserProvider.get();
+        if (principal != null && principal.isSuperAdmin()) {
+            return pourashavaRepository.findAll();
+        }
+        return pourashavaRepository.findBySubdomainNotIgnoreCase(RoleCodes.DEMO_SUBDOMAIN);
     }
 
     public Pourashava findById(Long id) {

@@ -24,9 +24,6 @@ public class UserValidatorService {
         if (password == null || password.trim().isEmpty()) {
             throw new UserInformException("Password is required");
         }
-        if (subdomain == null || subdomain.trim().isEmpty()) {
-            throw new UserInformException("Subdomain is required");
-        }
         if (userRepository.existsByUsername(username)) {
             throw new UserInformException("Username already exists");
         }
@@ -47,9 +44,6 @@ public class UserValidatorService {
         }
         if (email == null || email.trim().isEmpty()) {
             throw new UserInformException("Email is required");
-        }
-        if (subdomain == null || subdomain.trim().isEmpty()) {
-            throw new UserInformException("Subdomain is required");
         }
     }
 }

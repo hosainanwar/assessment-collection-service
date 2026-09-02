@@ -2,6 +2,7 @@ package com.nhimex.assessment_collection.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Filter;
 
 @Getter
 @Setter
@@ -10,6 +11,7 @@ import lombok.*;
 @Builder
 @Entity
 @Table(name = "pouroshova_infos")
+@Filter(name = TenantFilters.TENANT, condition = TenantFilters.CONDITION)
 public class PouroshovaInfo extends Auditable {
 
     @Id
@@ -51,6 +53,10 @@ public class PouroshovaInfo extends Auditable {
 
     @Column(name = "subdomain", nullable = false)
     private String subdomain;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "pourashava_id", nullable = false)
+    private Pourashava pourashava;
 
     @Column(name = "mayor_label_type", nullable = false)
     @Builder.Default

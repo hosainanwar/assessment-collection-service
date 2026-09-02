@@ -2,6 +2,10 @@ package com.nhimex.assessment_collection.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Filter;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -10,6 +14,7 @@ import lombok.*;
 @Builder
 @Entity
 @Table(name = "users")
+@Filter(name = TenantFilters.TENANT, condition = TenantFilters.CONDITION)
 public class User extends Auditable {
 
     @Id
@@ -61,11 +66,20 @@ public class User extends Auditable {
     @Column(name = "subdomain")
     private String subdomain;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "pourashava_id", nullable = false)
+    private Pourashava pourashava;
+
     @Column(name = "status")
     @Builder.Default
     private Boolean status = true;
 
-    @Column(name = "role")
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
     @Builder.Default
-    private String role = "USER";
+    private Set<Role> roles = new LinkedHashSet<>();
 }

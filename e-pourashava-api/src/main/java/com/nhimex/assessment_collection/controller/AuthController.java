@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -34,5 +35,12 @@ public class AuthController {
         String refreshToken = request.get("refreshToken");
         LoginResponseDto response = authService.refresh(refreshToken);
         return ResponseEntity.ok(ApiResponse.success("Token refreshed successfully", response));
+    }
+
+    @GetMapping("/me")
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "Current user", description = "Return the authenticated user's identity, roles, and permissions")
+    public ResponseEntity<ApiResponse<LoginResponseDto>> me() {
+        return ResponseEntity.ok(ApiResponse.success(authService.currentUser()));
     }
 }

@@ -19,4 +19,6 @@ public interface PourashavaRepository extends JpaRepository<Pourashava, Long> {
     boolean existsBySubdomain(String subdomain);
 
     boolean existsByEnNameAndDistrictId(String enName, Long districtId);
+
+    List<Pourashava> findBySubdomainNotIgnoreCase(String subdomain);
 }

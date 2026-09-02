@@ -1,7 +1,9 @@
 package com.nhimex.assessment_collection.service;
 
 import com.nhimex.assessment_collection.dto.response_dto.WordResponseDto;
+import com.nhimex.assessment_collection.entity.Pourashava;
 import com.nhimex.assessment_collection.entity.Word;
+import com.nhimex.assessment_collection.security.TenantGuard;
 import com.nhimex.assessment_collection.service.command.WordCommand;
 import com.nhimex.assessment_collection.service.mapper.WordMapper;
 import com.nhimex.assessment_collection.service.query.WordQueryService;
@@ -20,6 +22,7 @@ public class WordService {
     private final WordCommand command;
     private final WordValidatorService validator;
     private final WordMapper mapper;
+    private final TenantGuard tenantGuard;
 
     public List<WordResponseDto> findAll() {
         return queryService.findAll().stream()
@@ -45,21 +48,27 @@ public class WordService {
     }
 
     public WordResponseDto create(Word word) {
+        Pourashava pourashava = tenantGuard.resolvePourashava(
+                word.getPourashava() != null ? word.getPourashava().getId() : null,
+                word.getSubdomain());
+        word.setPourashava(pourashava);
+        word.setSubdomain(pourashava.getSubdomain());
         validator.validateForCreate(word.getWordName(), word.getSubdomain());
         return mapper.toResponse(command.save(word));
     }
 
     public WordResponseDto update(Long id, Word word) {
-        validator.validateForUpdate(id, word.getWordName(), word.getSubdomain());
         Word existing = queryService.findById(id);
+        tenantGuard.assertSameTenant(existing.getPourashava().getId());
+        validator.validateForUpdate(id, word.getWordName(), existing.getSubdomain());
         existing.setWordName(word.getWordName());
-        existing.setSubdomain(word.getSubdomain());
         existing.setCreatedBy(word.getCreatedBy());
         return mapper.toResponse(command.save(existing));
     }
 
     public void delete(Long id) {
         Word word = queryService.findById(id);
+        tenantGuard.assertSameTenant(word.getPourashava().getId());
         command.delete(word);
     }
 }

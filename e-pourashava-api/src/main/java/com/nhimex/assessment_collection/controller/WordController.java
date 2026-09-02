@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class WordController {
     private final WordService wordService;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('WORD:READ')")
     @Operation(summary = "Get all words")
     public ResponseEntity<ApiResponse<List<WordResponseDto>>> getAll() {
         List<WordResponseDto> words = wordService.findAll();
@@ -28,6 +30,7 @@ public class WordController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('WORD:READ')")
     @Operation(summary = "Get word by ID")
     public ResponseEntity<ApiResponse<WordResponseDto>> getById(@PathVariable Long id) {
         WordResponseDto word = wordService.findById(id);
@@ -35,6 +38,7 @@ public class WordController {
     }
 
     @GetMapping("/by-subdomain/{subdomain}")
+    @PreAuthorize("hasAuthority('WORD:READ')")
     @Operation(summary = "Get words by subdomain")
     public ResponseEntity<ApiResponse<List<WordResponseDto>>> getBySubdomain(@PathVariable String subdomain) {
         List<WordResponseDto> words = wordService.findBySubdomain(subdomain);
@@ -42,6 +46,7 @@ public class WordController {
     }
 
     @GetMapping("/search")
+    @PreAuthorize("hasAuthority('WORD:READ')")
     @Operation(summary = "Search words")
     public ResponseEntity<ApiResponse<List<WordResponseDto>>> search(
             @RequestParam(required = false) String wordName,
@@ -51,6 +56,7 @@ public class WordController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('WORD:CREATE')")
     @Operation(summary = "Create word")
     public ResponseEntity<ApiResponse<WordResponseDto>> create(@RequestBody Word word) {
         WordResponseDto created = wordService.create(word);
@@ -58,6 +64,7 @@ public class WordController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('WORD:UPDATE')")
     @Operation(summary = "Update word")
     public ResponseEntity<ApiResponse<WordResponseDto>> update(@PathVariable Long id, @RequestBody Word word) {
         WordResponseDto updated = wordService.update(id, word);
@@ -65,6 +72,7 @@ public class WordController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('WORD:DELETE')")
     @Operation(summary = "Delete word")
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
         wordService.delete(id);

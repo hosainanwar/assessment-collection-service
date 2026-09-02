@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -23,6 +25,8 @@ public class UserResponseDto {
     private String postalCode;
     private String mobileNo;
     private String subdomain;
+    private Long pourashavaId;
     private String role;
+    private List<String> roles;
     private Boolean status;
 }

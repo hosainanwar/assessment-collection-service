@@ -1,0 +1,24 @@
+package com.nhimex.assessment_collection.dto.response_dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.List;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class RoleResponseDto {
+
+    private Long id;
+    private String code;
+    private String nameBn;
+    private String nameEn;
+    private String description;
+    private Boolean isSystem;
+    private Boolean status;
+    private List<PermissionResponseDto> permissions;
+}

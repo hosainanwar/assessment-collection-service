@@ -1,8 +1,10 @@
 package com.nhimex.assessment_collection.service;
 
 import com.nhimex.assessment_collection.dto.response_dto.PouroshovaInfoResponseDto;
+import com.nhimex.assessment_collection.entity.Pourashava;
 import com.nhimex.assessment_collection.entity.PouroshovaInfo;
 import com.nhimex.assessment_collection.exception.UserInformException;
+import com.nhimex.assessment_collection.security.TenantGuard;
 import com.nhimex.assessment_collection.service.command.PouroshovaInfoCommand;
 import com.nhimex.assessment_collection.service.mapper.PouroshovaInfoMapper;
 import com.nhimex.assessment_collection.service.query.PouroshovaInfoQueryService;
@@ -21,6 +23,7 @@ public class PouroshovaInfoService {
     private final PouroshovaInfoCommand command;
     private final PouroshovaInfoValidatorService validator;
     private final PouroshovaInfoMapper mapper;
+    private final TenantGuard tenantGuard;
 
     public List<PouroshovaInfoResponseDto> findAll() {
         return queryService.findAll().stream()
@@ -39,6 +42,11 @@ public class PouroshovaInfoService {
     }
 
     public PouroshovaInfoResponseDto create(PouroshovaInfo pouroshovaInfo) {
+        Pourashava pourashava = tenantGuard.resolvePourashava(
+                pouroshovaInfo.getPourashava() != null ? pouroshovaInfo.getPourashava().getId() : null,
+                pouroshovaInfo.getSubdomain());
+        pouroshovaInfo.setPourashava(pourashava);
+        pouroshovaInfo.setSubdomain(pourashava.getSubdomain());
         validator.validateForCreate(pouroshovaInfo.getPouroshovaName(), pouroshovaInfo.getMeyorName(),
                 pouroshovaInfo.getPsName(), pouroshovaInfo.getDsName(),
                 pouroshovaInfo.getSignatureName(), pouroshovaInfo.getSubdomain());
@@ -50,11 +58,7 @@ public class PouroshovaInfoService {
 
     public PouroshovaInfoResponseDto update(Long id, PouroshovaInfo pouroshovaInfo) {
         PouroshovaInfo existing = queryService.findById(id);
-
-        if (!existing.getSubdomain().equals(pouroshovaInfo.getSubdomain()) &&
-                queryService.existsBySubdomain(pouroshovaInfo.getSubdomain())) {
-            throw new UserInformException("Subdomain already exists: " + pouroshovaInfo.getSubdomain());
-        }
+        tenantGuard.assertSameTenant(existing.getPourashava().getId());
 
         existing.setPouroshovaName(pouroshovaInfo.getPouroshovaName());
         existing.setMeyorName(pouroshovaInfo.getMeyorName());
@@ -66,7 +70,6 @@ public class PouroshovaInfoService {
         existing.setAssessorSign(pouroshovaInfo.getAssessorSign());
         existing.setTaxCollectorType(pouroshovaInfo.getTaxCollectorType());
         existing.setTaxCollectorSign(pouroshovaInfo.getTaxCollectorSign());
-        existing.setSubdomain(pouroshovaInfo.getSubdomain());
         existing.setMayorLabelType(pouroshovaInfo.getMayorLabelType());
         existing.setMayorLabelTypeCollection(pouroshovaInfo.getMayorLabelTypeCollection());
         existing.setLogo(pouroshovaInfo.getLogo());
@@ -78,6 +81,7 @@ public class PouroshovaInfoService {
 
     public void delete(Long id) {
         PouroshovaInfo pouroshovaInfo = queryService.findById(id);
+        tenantGuard.assertSameTenant(pouroshovaInfo.getPourashava().getId());
         command.delete(pouroshovaInfo);
     }
 }

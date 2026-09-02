@@ -12,6 +12,9 @@ export interface User {
   postalCode?: string;
   mobileNo?: string;
   subdomain?: string;
+  pourashavaId?: number;
   role?: string;
+  roles?: string[];
+  roleCodes?: string[];
   status?: boolean;
 }

@@ -1,22 +1,36 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
-import { API_URL } from '../common/api-url-locations';
+import { Observable, map, tap } from 'rxjs';
+import { environment } from '../../environments/environment';
+import { ApiResponse } from '../common/model/api-response.model';
 
 export interface LoginRequest {
   username: string;
   password: string;
-  tenantId?: string;
+  tenantId: string;
 }
 
 export interface LoginResponse {
-  accessToken: string;
-  refreshToken: string;
-  tokenType: string;
-  expiresIn: number;
+  accessToken?: string;
+  refreshToken?: string;
+  tokenType?: string;
+  expiresIn?: number;
   username: string;
   tenantId?: string;
+  pourashavaId?: number;
   role?: string;
+  roles?: string[];
+  permissions?: string[];
+  subdomain?: string;
+}
+
+export interface StoredUser {
+  username: string;
+  role?: string;
+  roles?: string[];
+  permissions?: string[];
+  tenantId?: string;
+  pourashavaId?: number;
   subdomain?: string;
 }
 
@@ -30,27 +44,17 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   login(request: LoginRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(API_URL.auth.login, request).pipe(
-      tap(response => {
-        localStorage.setItem(this.TOKEN_KEY, response.accessToken);
-        localStorage.setItem(this.REFRESH_TOKEN_KEY, response.refreshToken);
-        localStorage.setItem(this.USER_KEY, JSON.stringify({
-          username: response.username,
-          role: response.role,
-          tenantId: response.tenantId,
-          subdomain: response.subdomain
-        }));
-      })
+    return this.http.post<ApiResponse<LoginResponse>>(`${environment.apiBaseUrl}/auth/login`, request).pipe(
+      map(res => res.data),
+      tap(response => this.persistSession(response))
     );
   }
 
   refreshToken(): Observable<LoginResponse> {
     const refreshToken = localStorage.getItem(this.REFRESH_TOKEN_KEY);
-    return this.http.post<LoginResponse>(API_URL.auth.refresh, { refreshToken }).pipe(
-      tap(response => {
-        localStorage.setItem(this.TOKEN_KEY, response.accessToken);
-        localStorage.setItem(this.REFRESH_TOKEN_KEY, response.refreshToken);
-      })
+    return this.http.post<ApiResponse<LoginResponse>>(`${environment.apiBaseUrl}/auth/refresh`, { refreshToken }).pipe(
+      map(res => res.data),
+      tap(response => this.persistSession(response))
     );
   }
 
@@ -68,13 +72,47 @@ export class AuthService {
     return !!this.getToken();
   }
 
-  getCurrentUser(): { username: string; role?: string; tenantId?: string; subdomain?: string } | null {
+  getCurrentUser(): StoredUser | null {
     const user = localStorage.getItem(this.USER_KEY);
     return user ? JSON.parse(user) : null;
   }
 
   getSubdomain(): string | null {
+    return this.getCurrentUser()?.subdomain || null;
+  }
+
+  isSuperAdmin(): boolean {
     const user = this.getCurrentUser();
-    return user?.subdomain || null;
+    return !!user?.roles?.includes('SUPER_ADMIN') || user?.role === 'SUPER_ADMIN';
+  }
+
+  hasPermission(code: string): boolean {
+    if (this.isSuperAdmin()) {
+      return true;
+    }
+    return !!this.getCurrentUser()?.permissions?.includes(code);
+  }
+
+  hasAnyPermission(codes: string | string[]): boolean {
+    const list = Array.isArray(codes) ? codes : [codes];
+    return list.some(code => this.hasPermission(code));
+  }
+
+  private persistSession(response: LoginResponse): void {
+    if (response.accessToken) {
+      localStorage.setItem(this.TOKEN_KEY, response.accessToken);
+    }
+    if (response.refreshToken) {
+      localStorage.setItem(this.REFRESH_TOKEN_KEY, response.refreshToken);
+    }
+    localStorage.setItem(this.USER_KEY, JSON.stringify({
+      username: response.username,
+      role: response.role,
+      roles: response.roles || [],
+      permissions: response.permissions || [],
+      tenantId: response.tenantId,
+      pourashavaId: response.pourashavaId,
+      subdomain: response.subdomain
+    } as StoredUser));
   }
 }

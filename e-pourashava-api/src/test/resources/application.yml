@@ -1,0 +1,27 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:assessmentdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=false;MODE=MYSQL
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.H2Dialect
+    defer-datasource-initialization: true
+  sql:
+    init:
+      mode: always
+  flyway:
+    enabled: false
+  cache:
+    type: simple
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
+
+jwt:
+  secret: eW91ci1zZWNyZXQta2V5LW11c3QtYmUtbG9uZy1lbm91Z2gtZm9yLWhzMjU2
+  expiration: 86400000
+  refresh-expiration: 604800000

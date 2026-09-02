@@ -2,9 +2,11 @@ package com.nhimex.assessment_collection.service;
 
 import com.nhimex.assessment_collection.dto.response_dto.ParaResponseDto;
 import com.nhimex.assessment_collection.entity.Para;
+import com.nhimex.assessment_collection.entity.Pourashava;
 import com.nhimex.assessment_collection.entity.Word;
 import com.nhimex.assessment_collection.exception.ResourceNotFoundException;
 import com.nhimex.assessment_collection.repository.WordRepository;
+import com.nhimex.assessment_collection.security.TenantGuard;
 import com.nhimex.assessment_collection.service.command.ParaCommand;
 import com.nhimex.assessment_collection.service.mapper.ParaMapper;
 import com.nhimex.assessment_collection.service.query.ParaQueryService;
@@ -24,6 +26,7 @@ public class ParaService {
     private final ParaValidatorService validator;
     private final ParaMapper mapper;
     private final WordRepository wordRepository;
+    private final TenantGuard tenantGuard;
 
     public List<ParaResponseDto> findAll() {
         return queryService.findAll().stream()
@@ -60,6 +63,11 @@ public class ParaService {
                     .orElseThrow(() -> new ResourceNotFoundException("Word", "id", para.getWord().getId()));
             para.setWord(word);
         }
+        Pourashava pourashava = tenantGuard.resolvePourashava(
+                para.getPourashava() != null ? para.getPourashava().getId() : null,
+                para.getSubdomain());
+        para.setPourashava(pourashava);
+        para.setSubdomain(pourashava.getSubdomain());
         validator.validateForCreate(para.getPbrName(),
                 para.getWord() != null ? para.getWord().getId() : null,
                 para.getSubdomain());
@@ -68,6 +76,7 @@ public class ParaService {
 
     public ParaResponseDto update(Long id, Para para) {
         Para existing = queryService.findById(id);
+        tenantGuard.assertSameTenant(existing.getPourashava().getId());
 
         if (para.getWord() != null && para.getWord().getId() != null) {
             Word word = wordRepository.findById(para.getWord().getId())
@@ -77,16 +86,16 @@ public class ParaService {
 
         validator.validateForUpdate(id, para.getPbrName(),
                 existing.getWord() != null ? existing.getWord().getId() : null,
-                para.getSubdomain());
+                existing.getSubdomain());
 
         existing.setPbrName(para.getPbrName());
-        existing.setSubdomain(para.getSubdomain());
         existing.setCreatedBy(para.getCreatedBy());
         return mapper.toResponse(command.save(existing));
     }
 
     public void delete(Long id) {
         Para para = queryService.findById(id);
+        tenantGuard.assertSameTenant(para.getPourashava().getId());
         command.delete(para);
     }
 }

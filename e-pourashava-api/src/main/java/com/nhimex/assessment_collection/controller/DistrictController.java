@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class DistrictController {
     private final DistrictService districtService;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('DISTRICT:READ')")
     @Operation(summary = "Get all districts")
     public ResponseEntity<ApiResponse<List<DistrictResponseDto>>> getAll() {
         List<DistrictResponseDto> districts = districtService.findAll();
@@ -28,6 +30,7 @@ public class DistrictController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('DISTRICT:READ')")
     @Operation(summary = "Get district by ID")
     public ResponseEntity<ApiResponse<DistrictResponseDto>> getById(@PathVariable Long id) {
         DistrictResponseDto district = districtService.findById(id);
@@ -35,6 +38,7 @@ public class DistrictController {
     }
 
     @GetMapping("/by-division/{divisionId}")
+    @PreAuthorize("hasAuthority('DISTRICT:READ')")
     @Operation(summary = "Get districts by division ID")
     public ResponseEntity<ApiResponse<List<DistrictResponseDto>>> getByDivisionId(@PathVariable Long divisionId) {
         List<DistrictResponseDto> districts = districtService.findByDivisionId(divisionId);
@@ -42,6 +46,7 @@ public class DistrictController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('DISTRICT:CREATE')")
     @Operation(summary = "Create district")
     public ResponseEntity<ApiResponse<DistrictResponseDto>> create(@RequestBody District district) {
         DistrictResponseDto created = districtService.create(district);
@@ -49,6 +54,7 @@ public class DistrictController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('DISTRICT:UPDATE')")
     @Operation(summary = "Update district")
     public ResponseEntity<ApiResponse<DistrictResponseDto>> update(@PathVariable Long id, @RequestBody District district) {
         DistrictResponseDto updated = districtService.update(id, district);
@@ -56,6 +62,7 @@ public class DistrictController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('DISTRICT:DELETE')")
     @Operation(summary = "Delete district")
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
         districtService.delete(id);

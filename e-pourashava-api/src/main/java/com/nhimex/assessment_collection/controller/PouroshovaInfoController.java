@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class PouroshovaInfoController {
     private final PouroshovaInfoService pouroshovaInfoService;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('POUROSHOVA_INFO:READ')")
     @Operation(summary = "Get all pouroshova infos")
     public ResponseEntity<ApiResponse<List<PouroshovaInfoResponseDto>>> getAll() {
         List<PouroshovaInfoResponseDto> infos = pouroshovaInfoService.findAll();
@@ -28,6 +30,7 @@ public class PouroshovaInfoController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('POUROSHOVA_INFO:READ')")
     @Operation(summary = "Get pouroshova info by ID")
     public ResponseEntity<ApiResponse<PouroshovaInfoResponseDto>> getById(@PathVariable Long id) {
         PouroshovaInfoResponseDto info = pouroshovaInfoService.findById(id);
@@ -35,6 +38,7 @@ public class PouroshovaInfoController {
     }
 
     @GetMapping("/by-subdomain/{subdomain}")
+    @PreAuthorize("hasAuthority('POUROSHOVA_INFO:READ')")
     @Operation(summary = "Get pouroshova info by subdomain")
     public ResponseEntity<ApiResponse<PouroshovaInfoResponseDto>> getBySubdomain(@PathVariable String subdomain) {
         PouroshovaInfoResponseDto info = pouroshovaInfoService.findBySubdomain(subdomain);
@@ -42,6 +46,7 @@ public class PouroshovaInfoController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('POUROSHOVA_INFO:CREATE')")
     @Operation(summary = "Create pouroshova info")
     public ResponseEntity<ApiResponse<PouroshovaInfoResponseDto>> create(@RequestBody PouroshovaInfo pouroshovaInfo) {
         PouroshovaInfoResponseDto created = pouroshovaInfoService.create(pouroshovaInfo);
@@ -49,6 +54,7 @@ public class PouroshovaInfoController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('POUROSHOVA_INFO:UPDATE')")
     @Operation(summary = "Update pouroshova info")
     public ResponseEntity<ApiResponse<PouroshovaInfoResponseDto>> update(@PathVariable Long id,
                                                                           @RequestBody PouroshovaInfo pouroshovaInfo) {
@@ -57,6 +63,7 @@ public class PouroshovaInfoController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('POUROSHOVA_INFO:DELETE')")
     @Operation(summary = "Delete pouroshova info")
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
         pouroshovaInfoService.delete(id);

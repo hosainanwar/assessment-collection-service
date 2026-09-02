@@ -4,6 +4,8 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class UserRequestDto {
 
@@ -35,7 +37,11 @@ public class UserRequestDto {
 
     private String subdomain;
 
+    private Long pourashavaId;
+
     private String role;
+
+    private List<String> roleCodes;
 
     private Boolean status;
 }

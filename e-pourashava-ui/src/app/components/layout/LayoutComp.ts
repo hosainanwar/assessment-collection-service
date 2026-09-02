@@ -2,11 +2,12 @@ import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../service/auth.service';
+import { HasPermissionDirective } from '../../common/directive/has-permission.directive';
 
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive, RouterOutlet],
+  imports: [CommonModule, RouterLink, RouterLinkActive, RouterOutlet, HasPermissionDirective],
   template: `
     <div class="d-flex" style="min-height: 100vh;">
       <nav class="sidebar bg-dark text-white">
@@ -14,39 +15,44 @@ import { AuthService } from '../../service/auth.service';
           <h5 class="mb-0"><i class="bi bi-building"></i> E-Pourashava</h5>
         </div>
         <ul class="nav flex-column p-2">
-          <li class="nav-item">
+          <li class="nav-item" *hasPermission="'DIVISION:READ'">
             <a class="nav-link text-white" routerLink="/divisions" routerLinkActive="active">
               <i class="bi bi-grid me-2"></i>বিভাগ
             </a>
           </li>
-          <li class="nav-item">
+          <li class="nav-item" *hasPermission="'DISTRICT:READ'">
             <a class="nav-link text-white" routerLink="/districts" routerLinkActive="active">
               <i class="bi bi-geo-alt me-2"></i>জেলা
             </a>
           </li>
-          <li class="nav-item">
+          <li class="nav-item" *hasPermission="'POURASHAVA:READ'">
             <a class="nav-link text-white" routerLink="/pourashavas" routerLinkActive="active">
               <i class="bi bi-bank me-2"></i>পৌরসভা
             </a>
           </li>
-          <li class="nav-item">
+          <li class="nav-item" *hasPermission="'POUROSHOVA_INFO:READ'">
             <a class="nav-link text-white" routerLink="/pouroshova-infos" routerLinkActive="active">
               <i class="bi bi-info-circle me-2"></i>পৌরসভা তথ্য
             </a>
           </li>
-          <li class="nav-item">
+          <li class="nav-item" *hasPermission="'WORD:READ'">
             <a class="nav-link text-white" routerLink="/words" routerLinkActive="active">
               <i class="bi bi-grid-3x3-gap me-2"></i>ওয়ার্ড
             </a>
           </li>
-          <li class="nav-item">
+          <li class="nav-item" *hasPermission="'PARA:READ'">
             <a class="nav-link text-white" routerLink="/paras" routerLinkActive="active">
               <i class="bi bi-pin-map me-2"></i>পাড়া
             </a>
           </li>
-          <li class="nav-item border-top border-secondary mt-2 pt-2">
+          <li class="nav-item border-top border-secondary mt-2 pt-2" *hasPermission="'USER:READ'">
             <a class="nav-link text-white" routerLink="/users" routerLinkActive="active">
               <i class="bi bi-people me-2"></i>ব্যবহারকারী
+            </a>
+          </li>
+          <li class="nav-item" *hasPermission="'ROLE:READ'">
+            <a class="nav-link text-white" routerLink="/roles" routerLinkActive="active">
+              <i class="bi bi-shield-lock me-2"></i>রোল
             </a>
           </li>
         </ul>

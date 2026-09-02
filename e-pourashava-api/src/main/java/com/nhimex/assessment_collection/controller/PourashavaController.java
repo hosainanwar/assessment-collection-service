@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class PourashavaController {
     private final PourashavaService pourashavaService;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('POURASHAVA:READ')")
     @Operation(summary = "Get all pourashavas")
     public ResponseEntity<ApiResponse<List<PourashavaResponseDto>>> getAll() {
         List<PourashavaResponseDto> pourashavas = pourashavaService.findAll();
@@ -28,6 +30,7 @@ public class PourashavaController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('POURASHAVA:READ')")
     @Operation(summary = "Get pourashava by ID")
     public ResponseEntity<ApiResponse<PourashavaResponseDto>> getById(@PathVariable Long id) {
         PourashavaResponseDto pourashava = pourashavaService.findById(id);
@@ -35,6 +38,7 @@ public class PourashavaController {
     }
 
     @GetMapping("/by-subdomain/{subdomain}")
+    @PreAuthorize("hasAuthority('POURASHAVA:READ')")
     @Operation(summary = "Get pourashava by subdomain")
     public ResponseEntity<ApiResponse<PourashavaResponseDto>> getBySubdomain(@PathVariable String subdomain) {
         PourashavaResponseDto pourashava = pourashavaService.findBySubdomain(subdomain);
@@ -42,6 +46,7 @@ public class PourashavaController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('POURASHAVA:CREATE')")
     @Operation(summary = "Create pourashava")
     public ResponseEntity<ApiResponse<PourashavaResponseDto>> create(@RequestBody Pourashava pourashava) {
         PourashavaResponseDto created = pourashavaService.create(pourashava);
@@ -49,6 +54,7 @@ public class PourashavaController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('POURASHAVA:UPDATE')")
     @Operation(summary = "Update pourashava")
     public ResponseEntity<ApiResponse<PourashavaResponseDto>> update(@PathVariable Long id, @RequestBody Pourashava pourashava) {
         PourashavaResponseDto updated = pourashavaService.update(id, pourashava);
@@ -56,6 +62,7 @@ public class PourashavaController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('POURASHAVA:DELETE')")
     @Operation(summary = "Delete pourashava")
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
         pourashavaService.delete(id);

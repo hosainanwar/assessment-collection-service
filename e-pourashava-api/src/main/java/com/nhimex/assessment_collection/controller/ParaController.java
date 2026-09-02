@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class ParaController {
     private final ParaService paraService;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('PARA:READ')")
     @Operation(summary = "Get all paras")
     public ResponseEntity<ApiResponse<List<ParaResponseDto>>> getAll() {
         List<ParaResponseDto> paras = paraService.findAll();
@@ -28,6 +30,7 @@ public class ParaController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('PARA:READ')")
     @Operation(summary = "Get para by ID")
     public ResponseEntity<ApiResponse<ParaResponseDto>> getById(@PathVariable Long id) {
         ParaResponseDto para = paraService.findById(id);
@@ -35,6 +38,7 @@ public class ParaController {
     }
 
     @GetMapping("/by-word/{wordId}")
+    @PreAuthorize("hasAuthority('PARA:READ')")
     @Operation(summary = "Get paras by word ID")
     public ResponseEntity<ApiResponse<List<ParaResponseDto>>> getByWordId(@PathVariable Long wordId) {
         List<ParaResponseDto> paras = paraService.findByWordId(wordId);
@@ -42,6 +46,7 @@ public class ParaController {
     }
 
     @GetMapping("/by-subdomain/{subdomain}")
+    @PreAuthorize("hasAuthority('PARA:READ')")
     @Operation(summary = "Get paras by subdomain")
     public ResponseEntity<ApiResponse<List<ParaResponseDto>>> getBySubdomain(@PathVariable String subdomain) {
         List<ParaResponseDto> paras = paraService.findBySubdomain(subdomain);
@@ -49,6 +54,7 @@ public class ParaController {
     }
 
     @GetMapping("/by-word/{wordId}/subdomain/{subdomain}")
+    @PreAuthorize("hasAuthority('PARA:READ')")
     @Operation(summary = "Get paras by word ID and subdomain")
     public ResponseEntity<ApiResponse<List<ParaResponseDto>>> getByWordIdAndSubdomain(
             @PathVariable Long wordId, @PathVariable String subdomain) {
@@ -57,6 +63,7 @@ public class ParaController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('PARA:CREATE')")
     @Operation(summary = "Create para")
     public ResponseEntity<ApiResponse<ParaResponseDto>> create(@RequestBody Para para) {
         ParaResponseDto created = paraService.create(para);
@@ -64,6 +71,7 @@ public class ParaController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('PARA:UPDATE')")
     @Operation(summary = "Update para")
     public ResponseEntity<ApiResponse<ParaResponseDto>> update(@PathVariable Long id, @RequestBody Para para) {
         ParaResponseDto updated = paraService.update(id, para);
@@ -71,6 +79,7 @@ public class ParaController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('PARA:DELETE')")
     @Operation(summary = "Delete para")
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
         paraService.delete(id);
