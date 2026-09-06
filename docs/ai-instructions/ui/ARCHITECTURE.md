@@ -315,6 +315,8 @@ const routes: Routes = [
 
 ## Authentication & Authorization
 
+Permission codes, menu gates, and tenant login rules: [SECURITY.md](../SECURITY.md).
+
 ### Auth Flow
 ```
 Login → POST /api/v1/authentication/authenticate

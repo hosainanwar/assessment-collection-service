@@ -12,6 +12,13 @@ Architecture and coding guidance for agents and developers. Application source s
 | [RBAC_DESIGN.md](api/RBAC_DESIGN.md) | Authentication, roles, permissions, tenant isolation |
 | [AUTHENTICATION_ARCHITECTURE_TEMPLATE.md](api/AUTHENTICATION_ARCHITECTURE_TEMPLATE.md) | Historical OAuth2/JWT template (reference only) |
 
+## Cross-cutting
+
+| File | Purpose |
+|------|---------|
+| [SECURITY.md](SECURITY.md) | Security spec from `epourashava-main`, for API and UI implementation |
+| [entities/](entities/README.md) | One file per entity: schema, then business logic |
+
 ## UI (`e-pourashava-ui`)
 
 | File | Purpose |

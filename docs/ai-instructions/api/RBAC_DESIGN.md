@@ -2,6 +2,7 @@
 
 > **Status:** Implemented
 > **Scope:** `e-pourashava-api` (Spring Boot 4.1 / Java 17), with follow-on changes in `e-pourashava-ui`
+> **Related:** [SECURITY.md](../SECURITY.md) — Laravel analysis, full permission catalogue, API/UI implementation rules
 
 ---
 
